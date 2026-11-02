@@ -10,7 +10,7 @@ for /f "tokens=1-3 delims=. " %%a in ("%date%") do set "curr_date=%%c-%%b-%%a"
 set "curr_time=%time:~0,8%"
 
 call :log "=================================================="
-call :log "   Диагностика и audit компьютера"
+call :log "   Диагностика и аудит компьютера"
 call :log "   Дата: %curr_date%  Время: %curr_time%"
 call :log "=================================================="
 call :log ""
@@ -56,7 +56,7 @@ if defined DISK_SIZE_GB (call :log "Размер диска: %DISK_SIZE_GB% ГБ
 if defined DISK_FREE_GB (call :log "Свободно: %DISK_FREE_GB% ГБ") else (call :log "Свободно: Данные отсутствуют")
 call :log ""
 
-echo Идет опрос реестра установленных программ (это займет время)...
+echo Идет опрос реестра установленных программ...
 
 if exist "%APPS_TMP%" del "%APPS_TMP%"
 
@@ -74,90 +74,83 @@ call :log "=================================================="
 set "FOUND_APP="
 if exist "%APPS_TMP%" for /f "delims=" %%i in ('findstr /i "Office LibreOffice OpenOffice МойОфис" "%APPS_TMP%" 2^nul') do set "FOUND_APP=%%i"
 if defined FOUND_APP (
-    call :log "[ОК] Офисный пакет обнаружен: %FOUND_APP%"
+    call :log "[OK] Офисный пакет обнаружен"
 ) else (
-    call :log "[⚠️ РЕКОМЕНДАЦИЯ] Не обнаружен офисный пакет! Для работы с документами рекомендуется установить LibreOffice или МойОфис."
+    call :log "[RECOM] Не обнаружен офисный пакет рекомендуется установить LibreOffice"
 )
 
 set "FOUND_APP="
 if exist "%APPS_TMP%" for /f "delims=" %%i in ('findstr /i "7-Zip WinRAR WinZip" "%APPS_TMP%" 2^nul') do set "FOUND_APP=%%i"
 if defined FOUND_APP (
-    call :log "[ОК] Архиватор обнаружен: %FOUND_APP%"
+    call :log "[OK] Архиватор обнаружен"
 ) else (
-    call :log "[⚠️ РЕКОМЕНДАЦИЯ] Не обнаружен архиватор. Для работы с вложениями и zip/rar архивами в почте рекомендуется установить 7-Zip или WinRAR."
+    call :log "[RECOM] Не обнаружен архиватор рекомендуется установить 7-Zip"
 )
 
 set "FOUND_APP="
 if exist "%APPS_TMP%" for /f "delims=" %%i in ('findstr /i "Acrobat Foxit SumatraPDF" "%APPS_TMP%" 2^nul') do set "FOUND_APP=%%i"
 if defined FOUND_APP (
-    call :log "[ОК] Программа чтения PDF обнаружена: %FOUND_APP%"
+    call :log "[OK] Программа чтения PDF обнаружена"
 ) else (
-    call :log "[⚠️ РЕКОМЕНДАЦИЯ] Не обнаружено ПО для PDF. Для работы с инструкциями и договорами рекомендуется установить Foxit Reader или SumatraPDF."
+    call :log "[RECOM] Не обнаружено ПО для PDF рекомендуется установить Foxit"
 )
 
 set "FOUND_APP="
 if exist "%APPS_TMP%" for /f "delims=" %%i in ('findstr /i "Chrome Firefox Yandex" "%APPS_TMP%" 2^nul') do set "FOUND_APP=%%i"
 if defined FOUND_APP (
-    call :log "[ОК] Сторонний рабочий браузер обнаружен: %FOUND_APP%"
+    call :log "[OK] Сторонний рабочий браузер обнаружен"
 ) else (
-    call :log "[i] Сторонние браузеры не найдены. Используется встроенный системный компонент Microsoft Edge."
+    call :log "[i] Используется встроенный браузер Edge"
 )
 
 set "FOUND_APP="
 if exist "%APPS_TMP%" for /f "delims=" %%i in ('findstr /i "Kaspersky ESET Dr.Web Defender" "%APPS_TMP%" 2^nul') do set "FOUND_APP=%%i"
 if defined FOUND_APP (
-    call :log "[ОК] Средства антивирусной защиты: %FOUND_APP%"
+    call :log "[OK] Средства антивирусной защиты найдены"
 ) else (
-    call :log "[⚠️ РЕКОМЕНДАЦИЯ] Не найдена активная коммерческая антивирусная защита. Убедитесь, что системный Windows Defender включен."
+    call :log "[RECOM] Коммерческий антивирус не найден проверьте Defender"
 )
 call :log ""
 
 call :log "=================================================="
 call :log "   АНАЛИЗ ИЗЛИШНЕГО И НЕПРОФИЛЬНОГО ПО"
 call :log "=================================================="
-call :log "Внимание: данный раздел содержит рекомендации к проверке администратором,"
-call :log "программы не относятся к базовым офисным задачам и подлежат верификации."
-call :log "--------------------------------------------------"
 
-call :log "Группа 1: Игровое ПО и платформы:"
+call :log "Группа 1 Игровое ПО и платформы"
 set "GAME_FOUND=0"
 if exist "%APPS_TMP%" (
-    for /f "delims=" %%i in ('findstr /i "Steam Epic GOG Origin Ubisoft Battle.net Riot game gaming" "%APPS_TMP%" 2^nul') do (
-        call :log "  -> Найдено: %%i"
+    for /f "delims=" %%i in ('findstr /i "Steam Epic GOG Origin Ubisoft Battle.net Riot" "%APPS_TMP%" 2^nul') do (
         set "GAME_FOUND=1"
     )
 )
-if "%GAME_FOUND%"=="0" call :log "  Игровое ПО не обнаружено."
+if "%GAME_FOUND%"=="1" (call :log "  -> Найдено потенциально игровое ПО") else (call :log "  Игровое ПО не обнаружено")
 
-call :log "Группа 2: Торрент-клиенты и файлообменники (нагрузка на сеть):"
+call :log "Группа 2 Торрент клиенты"
 set "TORRENT_FOUND=0"
 if exist "%APPS_TMP%" (
-    for /f "delims=" %%i in ('findstr /i "torrent uTorrent BitTorrent qBittorrent Vuze" "%APPS_TMP%" 2^nul') do (
-        call :log "  -> Найдено: %%i"
+    for /f "delims=" %%i in ('findstr /i "torrent uTorrent BitTorrent qBittorrent" "%APPS_TMP%" 2^nul') do (
         set "TORRENT_FOUND=1"
     )
 )
-if "%TORRENT_FOUND%"=="0" call :log "  Торрент-клиенты не обнаружены."
+if "%TORRENT_FOUND%"=="1" (call :log "  -> Найдены торрент клиенты") else (call :log "  Торрент клиенты не обнаружены")
 
-call :log "Группа 3: Мессенджеры и личное общение (требует сверки со стандартом):"
+call :log "Группа 3 Мессенджеры"
 set "MSG_FOUND=0"
 if exist "%APPS_TMP%" (
     for /f "delims=" %%i in ('findstr /i "Discord Telegram WhatsApp Viber Skype" "%APPS_TMP%" 2^nul') do (
-        call :log "  -> Найдено: %%i"
         set "MSG_FOUND=1"
     )
 )
-if "%MSG_FOUND%"=="0" call :log "  Мессенджеры не обнаружены."
+if "%MSG_FOUND%"=="1" (call :log "  -> Найдены мессенджеры личного общения") else (call :log "  Мессенджеры не обнаружены")
 
-call :log "Группа 4: Мультимедиа и инструменты кастомизации:"
+call :log "Группа 4 Мультимедиа"
 set "ENT_FOUND=0"
 if exist "%APPS_TMP%" (
-    for /f "delims=" %%i in ('findstr /i "Wallpaper OBS Soundpad Player Winamp VLC" "%APPS_TMP%" 2^nul') do (
-        call :log "  -> Найдено: %%i"
+    for /f "delims=" %%i in ('findstr /i "Wallpaper OBS Soundpad Winamp VLC" "%APPS_TMP%" 2^nul') do (
         set "ENT_FOUND=1"
     )
 )
-if "%ENT_FOUND%"=="0" call :log "  Излишнее мультимедиа ПО не обнаружено."
+if "%ENT_FOUND%"=="1" (call :log "  -> Найдено излишнее развлекательное ПО") else (call :log "  Излишнее ПО не обнаружено")
 call :log ""
 
 if exist "%APPS_TMP%" del "%APPS_TMP%"
@@ -173,6 +166,6 @@ exit /b
 
 :log
 set "txt=%~1"
-echo(%txt%
-echo(%txt% >> "%REPORT%"
+echo %txt%
+echo %txt% >> "%REPORT%"
 exit /b
